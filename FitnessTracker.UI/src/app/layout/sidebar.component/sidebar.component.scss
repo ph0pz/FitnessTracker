@@ -1,0 +1,31 @@
+/* src/app/layout/sidebar/sidebar.component.scss */
+:host {
+  width: 250px; /* Fixed width for the sidebar */
+  background-color: #f0f0f0; /* Light background for the sidebar */
+  padding-top: 20px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1); /* Subtle shadow */
+  flex-shrink: 0; /* Prevent sidebar from shrinking */
+}
+
+.mat-nav-list {
+  width: 100%; /* Ensure list takes full width of host */
+}
+
+.mat-mdc-list-item {
+  padding: 10px 16px;
+  transition: background-color 0.2s ease-in-out;
+
+  .mat-icon {
+    margin-right: 16px;
+  }
+}
+
+.mat-mdc-list-item.mdc-list-item--activated {
+  background-color: var(--mat-list-item-hover-state-background-color, rgba(0, 0, 0, 0.04));
+  color: var(--mat-list-item-active-state-text-color, var(--mat-list-item-focus-state-text-color, rgba(0, 0, 0, 0.87))); /* Use Material's active color */
+  font-weight: 500;
+}
+
+.mat-mdc-list-item:hover {
+  background-color: #e0e0e0;
+}

@@ -1,0 +1,41 @@
+/* src/app/features/dashboard/dashboard.component.scss */
+.dashboard-container {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h1 {
+    color: #3f51b5; /* Primary Material color */
+    margin-bottom: 20px;
+    font-size: 2em;
+  }
+
+  p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+
+  mat-card {
+    margin-top: 20px;
+    padding: 20px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      background-color: #f9f9f9;
+      border: 1px solid #eee;
+      padding: 10px 15px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}

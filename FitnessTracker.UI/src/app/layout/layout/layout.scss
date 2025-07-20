@@ -1,0 +1,42 @@
+/* src/app/layout/layout/layout.component.scss (MODIFIED) */
+
+.sidenav-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-sidebar-sidenav {
+  // Styles for the overlaying sidenav
+  width: 280px; // Fixed width for the sidebar when it opens
+  background-color: #f0f0f0; // Match your sidebar background
+  box-shadow: 3px 0 6px rgba(0,0,0,0.2); // Stronger shadow for overlay
+  overflow: auto; // Allow sidebar content to scroll if it overflows
+  z-index: 1000; // Ensure it overlays other content
+}
+
+.sidenav-content-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.main-router-outlet {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+}
+
+/* General app-wide styles (from styles.scss, ensures layout fills screen) */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}

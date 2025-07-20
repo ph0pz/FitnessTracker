@@ -1,0 +1,26 @@
+<div class="dashboard-container">
+  <h1>{{ welcomeMessage }}</h1>
+
+  <p>{{ progressSummary }}</p>
+
+  <mat-card *ngIf="upcomingWorkouts.length > 0">
+    <mat-card-header>
+      <mat-card-title>Upcoming Workouts</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <ul>
+        <li *ngFor="let workout of upcomingWorkouts">
+          {{ workout }}
+          </li>
+      </ul>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card *ngIf="upcomingWorkouts.length === 0">
+    <mat-card-content>
+      No upcoming workouts planned. Time to add some!
+    </mat-card-content>
+  </mat-card>
+
+  <p>This is your main dashboard content. You will see personalized data and insights here.</p>
+</div>

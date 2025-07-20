@@ -15,6 +15,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSwaggerGen();
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          // Allow requests from your Angular development server
+                          policy.WithOrigins("http://localhost:4200")
+                                .AllowAnyHeader()    // Allow all headers from the client
+                                .AllowAnyMethod();   // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+                                                     // .AllowCredentials(); // Uncomment this line if you're sending cookies or authentication headers that require credentials (e.g., JWT in cookies)
+                      });
+});
 builder.Services.AddControllers();
 builder.Services.AddDbContext<FitnessTrackerDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -92,7 +105,7 @@ if (app.Environment.IsDevelopment())
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
-
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication(); // IMPORTANT: Must be called before UseAuthorization
 app.UseAuthorization();

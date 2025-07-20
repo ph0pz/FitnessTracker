@@ -1,0 +1,22 @@
+/* src/app/layout/header/header.component.scss (MODIFIED) */
+.spacer {
+  flex: 1 1 auto;
+}
+
+mat-toolbar {
+  padding: 0 16px;
+
+  .mat-mdc-button {
+    color: white; // Ensure logout button color is white
+  }
+}
+
+// Hamburger icon is now ALWAYS visible
+.sidenav-toggle-button {
+  display: inline-flex; // Ensure it's always displayed
+  margin-right: 10px; // Add some spacing
+  color: white; // Ensure icon color is white
+}
+
+// Remove the .desktop-only class rules as those buttons are now moved.
+// If you still have desktop-only elements, adjust this accordingly.

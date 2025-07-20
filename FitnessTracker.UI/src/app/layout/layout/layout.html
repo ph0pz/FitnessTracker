@@ -1,0 +1,17 @@
+<mat-sidenav-container class="sidenav-container">
+
+  <mat-sidenav #sidenav mode="over" opened="false" class="app-sidebar-sidenav">
+    <app-sidebar></app-sidebar>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="sidenav-content-area">
+    <app-header (sidenavToggle)="toggleSidenav()"></app-header>
+
+    <main class="main-router-outlet">
+      <router-outlet></router-outlet>
+    </main>
+
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

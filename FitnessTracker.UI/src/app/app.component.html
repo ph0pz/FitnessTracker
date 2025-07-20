@@ -1,0 +1,5 @@
+<ng-container *ngIf="isAuthenticated$ | async; else authPages">
+    <app-layout></app-layout> </ng-container>
+
+<ng-template #authPages>
+    <router-outlet></router-outlet> </ng-template>

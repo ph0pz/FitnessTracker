@@ -1,0 +1,16 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button (click)="onToggleSidenav()" class="sidenav-toggle-button">
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <span>Fitness Tracker</span>
+
+  <span class="spacer"></span>
+
+  <ng-container *ngIf="isAuthenticated$ | async">
+    <button mat-button (click)="logout()">
+      <mat-icon>logout</mat-icon> Logout
+    </button>
+  </ng-container>
+
+  </mat-toolbar>
