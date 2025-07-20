@@ -1,41 +1,104 @@
-/* src/app/features/dashboard/dashboard.component.scss */
+/* src/app/features/dashboard/dashboard.component.scss (UPDATED) */
 .dashboard-container {
   padding: 20px;
-  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Spacing between cards */
+  max-width: 900px; /* Max width for content on large screens */
+  margin: 0 auto; /* Center the content */
+}
+
+h1 {
+  color: #3f51b5; /* Primary Material color */
+  margin-bottom: 10px;
+  font-size: 2em;
+  text-align: center;
+}
+
+.dashboard-card {
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
 
-  h1 {
-    color: #3f51b5; /* Primary Material color */
-    margin-bottom: 20px;
-    font-size: 2em;
+.date-picker-card {
+  .full-width {
+    width: 100%;
   }
+}
 
-  p {
-    font-size: 1.1em;
-    line-height: 1.6;
+.macros-summary-card {
+  h2 {
+    color: #555;
+    margin-top: 0;
     margin-bottom: 15px;
   }
+  p {
+    margin-bottom: 8px;
+    font-size: 1.1em;
+  }
+}
 
-  mat-card {
-    margin-top: 20px;
-    padding: 20px;
+.action-buttons-card {
+  .action-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
+    gap: 15px;
+    justify-content: center; /* Center buttons horizontally */
+    align-items: center; /* Center buttons vertically */
   }
 
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  button {
+    width: 100%; /* Make buttons fill their grid column */
+    height: 60px; /* Taller buttons for touch */
+    font-size: 1.1em;
+    display: flex; /* Align icon and text */
+    align-items: center;
+    justify-content: center;
 
-    li {
-      background-color: #f9f9f9;
-      border: 1px solid #eee;
-      padding: 10px 15px;
-      margin-bottom: 8px;
-      border-radius: 5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    mat-icon {
+      margin-right: 8px;
     }
+  }
+}
+
+.progress-graph-card {
+  .chart-container {
+    height: 300px; /* Set a fixed height for the chart container */
+    width: 100%;
+    position: relative; /* Needed for chart responsiveness */
+  }
+}
+
+.loading-spinner, .error-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-size: 1.1em;
+  color: #666;
+
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.error-message {
+  color:red; /* Use Angular Material warn color */
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 600px) {
+  .dashboard-container {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 1.8em;
+  }
+
+  .action-buttons-grid {
+    grid-template-columns: 1fr; /* Stack buttons on very small screens */
   }
 }
