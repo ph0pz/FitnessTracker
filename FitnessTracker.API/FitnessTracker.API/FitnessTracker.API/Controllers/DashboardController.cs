@@ -25,14 +25,14 @@ namespace FitnessTracker.API.Controllers
             [HttpGet("summary")]
             public async Task<IActionResult> GetDashboardSummary([FromQuery] DateTime? date = null)
             {
-                //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                //if (userId == null || !int.TryParse(userId, out var parsedUserId))
-                //{
-                //    return Unauthorized("Invalid user token.");
-                //}
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null || !int.TryParse(userId, out var parsedUserId))
+                {
+                    return Unauthorized("Invalid user token.");
+                }
 
                 var summaryDate = date ?? DateTime.Today; // Default to today if no date is provided
-                var summary = await _dashboardService.GetDashboardSummaryAsync(1, summaryDate);
+                var summary = await _dashboardService.GetDashboardSummaryAsync(parsedUserId, summaryDate);
 
                 if (summary == null)
                 {

@@ -1,0 +1,81 @@
+<div class="meal-history-container mat-elevation-z2">
+  <mat-card>
+    <mat-card-header class="header">
+      <mat-card-title>Meal History</mat-card-title>
+      <button mat-button color="primary" (click)="goToDashboard()">
+        <mat-icon>arrow_back</mat-icon> Back to Dashboard
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-card class="meal-history-section-card date-picker-card">
+        <mat-card-content>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Date</mat-label>
+            <input matInput [matDatepicker]="picker" [formControl]="selectedDate">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="meal-history-section-card meals-list-card">
+        <mat-card-header class="section-header">
+          <mat-card-title class="section-title">
+            Meals for {{ selectedDate.value | date:'longDate' }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="filteredMeals.length === 0" class="no-meals-message">
+            <mat-icon>info</mat-icon> No meals logged for this date.
+          </div>
+
+          <div *ngFor="let meal of filteredMeals" class="meal-entry-card">
+            <mat-card>
+              <mat-card-title class="meal-title">
+                <span class="meal-name-tag">[{{ meal.mealName }}]</span> {{ meal.name }}
+                <span *ngIf="meal.notes" class="meal-notes"> - {{ meal.notes }}</span>
+              </mat-card-title>
+              <mat-card-content class="meal-details">
+                <p>
+                  <span class="highlight">{{ meal.calories }} kcal</span> |
+                  <span class="highlight">{{ meal.protein }}g P</span> |
+                  <span class="highlight">{{ meal.carbs }}g C</span> |
+                  <span class="highlight">{{ meal.fat }}g F</span>
+                </p>
+              </mat-card-content>
+              <mat-card-actions class="meal-actions">
+                <button mat-button color="accent" (click)="addToSaved(meal)">
+                  <mat-icon>save</mat-icon> Add to Saved
+                </button>
+                <button mat-button color="warn" (click)="deleteMeal(meal)">
+                  <mat-icon>delete</mat-icon> Delete
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </div>
+
+          <div class="add-meal-button-row">
+            <button mat-raised-button color="primary" (click)="openAddMealDialog()">
+              <mat-icon>add</mat-icon> Add New Meal
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-divider class="section-divider"></mat-divider>
+
+      <mat-card class="meal-history-section-card saved-meals-section-card">
+        <mat-card-header class="section-header">
+          <mat-card-title class="section-title">Saved Meals</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <app-saved-meals
+            [selectedDate]="selectedDate.value"
+            (mealAdded)="fetchMealsForDate(selectedDate.value)"
+          ></app-saved-meals>
+        </mat-card-content>
+      </mat-card>
+    </mat-card-content>
+  </mat-card>
+</div>

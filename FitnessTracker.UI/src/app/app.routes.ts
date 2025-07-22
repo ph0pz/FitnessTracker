@@ -6,6 +6,8 @@ import { LoginComponent } from './feature/auth/login/login.component/login.compo
 import { RegisterComponent } from './feature/auth/register/register.component/register.component';
 import { Layout } from './layout/layout/layout';
 import { DashboardComponent } from './feature/dashboard/dashboard.component';
+import { MealComponent } from './feature/meal/meal.component';
+import { ProgressTrackingComponent } from './feature/progress/progress.component';
 
 
 export const routes: Routes = [
@@ -32,9 +34,35 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () => import('./feature/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
-      // ... other protected feature routes will go here
+    
     ]
   },
+    {
+    path: '', // This means protected routes will be like /dashboard, /profile, etc.
+    component: MealComponent, // <--- LayoutComponent is rendered ONCE for this parent route
+    canActivate: [authGuard], // Protects all children of this route
+    children: [
+      {
+        path: 'meals',
+        loadComponent: () => import('./feature/meal/meal.component').then(m => m.MealComponent)
+      },
+    
+    ]
+  },
+   {
+    path: '', // This means protected routes will be like /dashboard, /profile, etc.
+    component: ProgressTrackingComponent, // <--- LayoutComponent is rendered ONCE for this parent route
+    canActivate: [authGuard], // Protects all children of this route
+    children: [
+      {
+        path: 'progress',
+        loadComponent: () => import('./feature/progress/progress.component').then(m => m.ProgressTrackingComponent)
+      },
+    
+    ]
+  },
+
+
 
   // Wildcard route for any unhandled paths (redirects based on auth status)
   {

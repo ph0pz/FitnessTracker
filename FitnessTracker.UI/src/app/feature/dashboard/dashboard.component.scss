@@ -1,104 +1,177 @@
-/* src/app/features/dashboard/dashboard.component.scss (UPDATED) */
 .dashboard-container {
+  max-width: 900px; // Slightly wider for charts
+  margin: 30px auto;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* Spacing between cards */
-  max-width: 900px; /* Max width for content on large screens */
-  margin: 0 auto; /* Center the content */
-}
-
-h1 {
-  color: #3f51b5; /* Primary Material color */
-  margin-bottom: 10px;
-  font-size: 2em;
-  text-align: center;
-}
-
-.dashboard-card {
-  padding: 20px;
+  background-color: #f5f5f5; // Light background for the overall container
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
-}
 
-.date-picker-card {
-  .full-width {
-    width: 100%;
-  }
-}
-
-.macros-summary-card {
-  h2 {
-    color: #555;
-    margin-top: 0;
-    margin-bottom: 15px;
-  }
-  p {
-    margin-bottom: 8px;
-    font-size: 1.1em;
-  }
-}
-
-.action-buttons-card {
-  .action-buttons-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Responsive grid */
-    gap: 15px;
-    justify-content: center; /* Center buttons horizontally */
-    align-items: center; /* Center buttons vertically */
-  }
-
-  button {
-    width: 100%; /* Make buttons fill their grid column */
-    height: 60px; /* Taller buttons for touch */
-    font-size: 1.1em;
-    display: flex; /* Align icon and text */
+  // Global header styling for the main card
+  mat-card-header.header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0; // Separator for header
+    margin-bottom: 10px; // Space below the main header
+  }
 
-    mat-icon {
-      margin-right: 8px;
+  mat-card-title {
+    font-size: 1.8em; // Larger title for dashboard
+    font-weight: 600;
+    color: #3f51b5; // Primary color
+  }
+
+  // Consistent styling for nested cards (sections)
+  .dashboard-section-card {
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Subtle shadow for cards
+
+    // Common styling for section headers within nested cards
+    .section-header {
+      padding: 16px;
+      border-bottom: 1px solid #e0e0e0;
+      margin-bottom: 15px; // Space after section header
+    }
+
+    .section-title {
+      font-size: 1.3em; // Slightly smaller than main title
+      font-weight: 500;
+      color: #555;
+      padding-left: 0; // Reset padding if inherited
+    }
+
+    .section-subtitle {
+      font-size: 1.1em;
+      font-weight: 500;
+      color: #666;
+      margin-bottom: 15px;
     }
   }
-}
 
-.progress-graph-card {
-  .chart-container {
-    height: 300px; /* Set a fixed height for the chart container */
-    width: 100%;
-    position: relative; /* Needed for chart responsiveness */
-  }
-}
-
-.loading-spinner, .error-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  font-size: 1.1em;
-  color: #666;
-
-  mat-icon {
-    margin-right: 8px;
-  }
-}
-
-.error-message {
-  color:red; /* Use Angular Material warn color */
-}
-
-/* Responsive adjustments for smaller screens */
-@media (max-width: 600px) {
-  .dashboard-container {
-    padding: 10px;
+  // Loading and Error Messages
+  .loading-state,
+  .error-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 4px;
+    font-size: 1.1em;
   }
 
-  h1 {
-    font-size: 1.8em;
+  .loading-state {
+    background-color: #e3f2fd; // Light blue
+    color: #1565c0; // Darker blue
+    mat-spinner {
+      margin-right: 15px;
+    }
+  }
+
+  .error-message {
+    background-color: #ffe0b2; // Light orange
+    color: #ef6c00; // Darker orange
+    mat-icon {
+      margin-right: 10px;
+    }
+  }
+
+  // Date Picker Specifics
+  .date-picker-card .mat-card-content {
+    padding-bottom: 0; // Adjust padding for form field
+  }
+
+  // Macros Pie Charts Grid
+  .macros-pie-charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); // Responsive grid
+    gap: 20px; // Space between charts
+    margin-bottom: 20px;
+
+    .macro-pie-item {
+      text-align: center;
+      padding: 15px;
+      border: 1px solid #eee; // Light border around each chart item
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+      h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #3f51b5; // Primary color for macro titles
+      }
+
+      .chart-container {
+        height: 150px; // Fixed height for consistency
+        width: 100%;
+        max-width: 150px; // Max width to keep pie charts from getting too big
+        margin: 0 auto 10px auto; // Center the chart
+        canvas {
+          display: block; // Ensure canvas takes up space correctly
+          max-height: 100%;
+          max-width: 100%;
+        }
+      }
+
+      .macro-details {
+        font-size: 0.9em;
+        line-height: 1.4;
+        span {
+          display: block; // Make each detail on a new line
+          strong {
+            font-size: 1.1em;
+            color: #4CAF50; // Green for consumed values
+          }
+        }
+      }
+    }
+  }
+
+  // Additional Metrics
+  .additional-metrics {
+    padding: 10px 0;
+    margin-top: 15px;
+    p {
+      margin: 8px 0;
+      font-size: 1.1em;
+      strong {
+        color: #3f51b5; // Primary color for values
+      }
+    }
+  }
+
+  // Action Buttons
+  .action-buttons-card .mat-card-content {
+    padding: 20px; // More padding for buttons
   }
 
   .action-buttons-grid {
-    grid-template-columns: 1fr; /* Stack buttons on very small screens */
+    display: flex; // Use flexbox
+    flex-wrap: wrap; // Allow wrapping on smaller screens
+    justify-content: center; // Center buttons
+    gap: 15px; // Space between buttons
+
+    button {
+      padding: 10px 20px;
+      font-size: 1.05em;
+      min-width: 180px; // Consistent width
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+
+  // Progress Graph Card
+  .progress-graph-card {
+    .chart-container {
+      height: 300px; // Adjust height for line graph
+      width: 100%;
+      padding: 16px;
+      canvas {
+        display: block; // Ensures canvas renders correctly
+      }
+    }
   }
 }

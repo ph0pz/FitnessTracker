@@ -1,38 +1,32 @@
 // src/app/features/dashboard/dashboard.component.ts (UPDATED)
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms'; // <--- For date picker
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker'; // <--- Datepicker
-import { MatNativeDateModule } from '@angular/material/core';     // <--- Datepicker
-import { format } from 'date-fns'; // <--- NEW: For date formatting
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { format } from 'date-fns';
 
 // Chart Imports
-import { BaseChartDirective } from 'ng2-charts'; // <--- Charting
-import { ChartConfiguration, ChartData, ChartType } from 'chart.js'; // <--- Charting
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData, ChartOptions, ChartType } from 'chart.js';
 import { DashboardService } from '../../core/service/dashboard.service';
 import { DashboardSummary } from '../../models/dashboard-summary.model';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; // <-- Add this import
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SharedMaterialModule } from '../../core/shared.module';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule, // For FormControl
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatNativeDateModule, 
-    MatProgressSpinnerModule,
-    BaseChartDirective // For charts
+    SharedMaterialModule,
+    BaseChartDirective // Ensure this is imported for Chart.js canvases
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -40,77 +34,125 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'; /
 export class DashboardComponent implements OnInit {
 
   dashboardSummary: DashboardSummary | null = null;
-  selectedDateControl = new FormControl(new Date()); // Initialize with today's date
+  selectedDateControl = new FormControl(new Date());
   isLoading: boolean = false;
   errorMessage: string | null = null;
 
-  // Chart Configuration for Weight Progress
+  // --- Chart.js Properties ---
+  // Pie Chart Options
+  public pieChartOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            if (context.parsed !== null) {
+              return `${label}: ${context.parsed} ${context.dataset.label}`;
+            }
+            return label;
+          }
+        }
+      }
+    }
+  };
+  public pieChartType: 'doughnut' = 'doughnut';
+
+  // FIX: Initialize datasets with an empty dataset object
+  public caloriesPieData: ChartData<'doughnut'> = {
+    labels: ['Consumed', 'Remaining'], // Initialize labels too
+    datasets: [{
+      data: [], // Initialize with an empty data array
+      backgroundColor: ['#4CAF50', '#FFCDD2'], // Example colors
+      hoverBackgroundColor: ['#66BB6A', '#EF9A9A'],
+      borderWidth: 0,
+      label: 'kcal' // Add a label for tooltips
+    }]
+  };
+  public proteinPieData: ChartData<'doughnut'> = {
+    labels: ['Consumed', 'Remaining'],
+    datasets: [{
+      data: [],
+      backgroundColor: ['#2196F3', '#BBDEFB'],
+      hoverBackgroundColor: ['#42A5F5', '#90CAF9'],
+      borderWidth: 0,
+      label: 'g'
+    }]
+  };
+  public carbsPieData: ChartData<'doughnut'> = {
+    labels: ['Consumed', 'Remaining'],
+    datasets: [{
+      data: [],
+      backgroundColor: ['#FFC107', '#FFECB3'],
+      hoverBackgroundColor: ['#FFD54F', '#FFE082'],
+      borderWidth: 0,
+      label: 'g'
+    }]
+  };
+  public fatPieData: ChartData<'doughnut'> = {
+    labels: ['Consumed', 'Remaining'],
+    datasets: [{
+      data: [],
+      backgroundColor: ['#9C27B0', '#E1BEE7'],
+      hoverBackgroundColor: ['#AB47BC', '#CE93D8'],
+      borderWidth: 0,
+      label: 'g'
+    }]
+  };
+
+  // Line Chart Options and Data
   public lineChartData: ChartData<'line'> = {
-    labels: [],
+    labels: [], // Initialize with empty labels
     datasets: [
       {
-        data: [],
+        data: [], // Initialize with empty data
         label: 'Weight (kg)',
-        borderColor: 'rgba(77,189,116,1)', // Greenish color
-        backgroundColor: 'rgba(77,189,116,0.2)',
-        pointBackgroundColor: 'rgba(77,189,116,1)',
+        borderColor: '#3f51b5',
+        backgroundColor: 'rgba(63, 81, 181, 0.2)',
+        pointBackgroundColor: '#3f51b5',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(77,189,116,0.8)',
+        pointHoverBorderColor: '#3f51b5',
         fill: 'origin',
+        tension: 0.3
       }
     ]
   };
-
-  public lineChartOptions: ChartConfiguration['options'] = {
+  public lineChartOptions: ChartOptions<'line'> = {
     responsive: true,
-    maintainAspectRatio: false, // Allows height to be set by CSS
-    elements: {
-      line: {
-        tension: 0.3 // Smooth curves
-      }
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: true, position: 'top' },
+      title: { display: false }
     },
     scales: {
       x: {
-        type: 'category', // Explicitly set x-axis type
         title: {
           display: true,
           text: 'Date'
         }
       },
       y: {
-        beginAtZero: false,
         title: {
           display: true,
           text: 'Weight (kg)'
         },
-        // Optional: Ensure ticks are integers if weights are whole numbers
-        // ticks: {
-        //   precision: 0
-        // }
-      }
-    },
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top',
-      },
-      tooltip: {
-        mode: 'index',
-        intersect: false,
+        beginAtZero: false
       }
     }
   };
+  public lineChartType: 'line' = 'line';
 
-  public lineChartType: ChartType = 'line';
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(private dashboardService: DashboardService, private router: Router) { }
 
   ngOnInit(): void {
-    // Fetch data for the initial selected date (today)
+    // Initial fetch of dashboard summary for the selected date
     this.fetchDashboardSummary(this.selectedDateControl.value);
 
-    // Subscribe to date changes from the date picker
+    // Subscribe to date changes to refetch data
     this.selectedDateControl.valueChanges.subscribe(date => {
       if (date) {
         this.fetchDashboardSummary(date);
@@ -126,68 +168,66 @@ export class DashboardComponent implements OnInit {
     this.isLoading = true;
     this.errorMessage = null;
 
-    // Format date to YYYY-MM-DD for the API call
-    const formattedDate = format(date, 'yyyy-MM-dd'); // Using date-fns for formatting
+    const formattedDate = format(date, 'yyyy-MM-dd');
 
     this.dashboardService.getDailySummary(formattedDate).subscribe({
       next: (data: DashboardSummary) => {
         this.dashboardSummary = data;
         this.isLoading = false;
-        this.updateChartData(data.currentWeight); // Update chart with current weight
+        this.updateAllPieCharts(data);
+        // You would likely also call a method here to update your line chart data
+        // For example: this.updateLineChartData(data.historicalWeightData);
       },
       error: (err: any) => {
         console.error('Error fetching dashboard summary:', err);
         this.errorMessage = 'Failed to load dashboard data. Please try again.';
-        this.dashboardSummary = null; // Clear previous data
+        this.dashboardSummary = null;
         this.isLoading = false;
       }
     });
   }
 
-  // Simulate updating chart data. In a real app, you'd fetch historical data.
-  updateChartData(currentWeight: number): void {
-    // For demonstration, we'll just add the current weight to a dummy history.
-    // In a real application, you would fetch actual historical weight data
-    // from your API and populate this chart.
+  updateAllPieCharts(data: DashboardSummary): void {
+    // Ensure the datasets array and the first dataset object exist before trying to set data
+    // This is handled by the improved initialization above.
+    this.caloriesPieData.datasets[0].data = [
+      data.caloriesConsumed,
+      Math.max(data.dailyCalorieGoal - data.caloriesConsumed, 0)
+    ];
+    this.proteinPieData.datasets[0].data = [
+      data.proteinConsumed,
+      Math.max(data.dailyProteinGoal - data.proteinConsumed, 0)
+    ];
+    this.carbsPieData.datasets[0].data = [
+      data.carbsConsumed,
+      Math.max(data.dailyCarbGoal - data.carbsConsumed, 0)
+    ];
+    this.fatPieData.datasets[0].data = [
+      data.fatConsumed,
+      Math.max(data.dailyFatGoal - data.fatConsumed, 0)
+    ];
 
-    // Dummy historical data (replace with actual API data)
-    const dummyDates = ['Jul 15', 'Jul 16', 'Jul 17', 'Jul 18', 'Jul 19', 'Jul 20']; // Sample dates
-    const dummyWeights = [79.2, 79.0, 78.5, 78.9, 78.7, 78.8]; // Sample weights
-
-    // Add current weight to dummy data if not already there for today
-    const todayFormatted = format(this.selectedDateControl.value!, 'MMM dd');
-    if (!dummyDates.includes(todayFormatted)) {
-      dummyDates.push(todayFormatted);
-      dummyWeights.push(currentWeight);
-    } else {
-      // Update if date already exists
-      const index = dummyDates.indexOf(todayFormatted);
-      dummyWeights[index] = currentWeight;
-    }
-
-    // Ensure dummy data is sorted by date if necessary
-    // (for this simple demo, we assume chronological order)
-
-    this.lineChartData.labels = dummyDates;
-    this.lineChartData.datasets[0].data = dummyWeights;
-
-    // Trigger chart update (optional, ng2-charts usually auto-updates)
-    // this.chart?.update(); // If using @ViewChild for chart
+    // Important: Tell ng2-charts to update the charts
+    // If you're using ViewChild directives for each chart, you can call their .update() method.
+    // However, if the data reference itself changes (which it doesn't here, only array contents),
+    // ng2-charts might not detect it automatically.
+    // If charts don't update, consider making a copy of the datasets or calling ViewChild.update()
+    // For example:
+    // if (this.chartDirective) { // assuming @ViewChild('caloriesChart') chartDirective!: BaseChartDirective;
+    //   this.chartDirective.update();
+    // }
+    // A simpler way (often works for ng2-charts) is to reassign the entire data object
+    // this.caloriesPieData = { ...this.caloriesPieData };
+    // Or just reassign the datasets array
+    this.caloriesPieData.datasets = [...this.caloriesPieData.datasets];
+    this.proteinPieData.datasets = [...this.proteinPieData.datasets];
+    this.carbsPieData.datasets = [...this.carbsPieData.datasets];
+    this.fatPieData.datasets = [...this.fatPieData.datasets];
   }
 
-  // Placeholder methods for action buttons
+
   addMeal(): void {
-    console.log('Add Meal button clicked!');
-    // Implement navigation or dialog for adding a meal
+    this.router.navigate(['/meals']);
   }
 
-  addExercise(): void {
-    console.log('Add Exercise button clicked!');
-    // Implement navigation or dialog for adding an exercise
-  }
-
-  logWeight(): void {
-    console.log('Log Weight button clicked!');
-    // Implement navigation or dialog for logging weight
-  }
 }

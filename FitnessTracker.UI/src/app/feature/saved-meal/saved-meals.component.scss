@@ -1,0 +1,102 @@
+.saved-meals-container {
+  // This container is often placed inside another mat-card from a parent component
+  // so we won't add `mat-elevation-z2` here, but rather focus on its internal elements.
+  // If this component stands alone, you might add it here.
+  padding: 10px 0; // Small internal padding if nested
+
+  .saved-meals-card {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Standard card shadow
+  }
+
+  .section-header {
+    padding: 16px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 15px;
+  }
+
+  .section-title {
+    font-size: 1.3em;
+    font-weight: 500;
+    color: #555;
+    padding-left: 0;
+  }
+
+  .mat-card-content {
+    padding-top: 0; // Adjust padding to follow the title
+  }
+
+  .loading-state,
+  .no-saved-items-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    font-style: italic;
+    color: #777;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    margin-bottom: 20px; // Space below the message
+    mat-icon {
+      margin-right: 10px;
+      color: #999;
+    }
+  }
+
+  .loading-state {
+    color: #1565c0; // Darker blue
+    background-color: #e3f2fd; // Light blue
+  }
+
+  .saved-item-entry-card {
+    margin-bottom: 15px; // Space between individual saved item cards
+    &:last-child {
+      margin-bottom: 0; // No bottom margin for the last item
+    }
+
+    mat-card {
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); // Slightly stronger shadow for individual items
+      transition: transform 0.2s ease-in-out; // Smooth hover effect
+
+      &:hover {
+        transform: translateY(-3px); // Subtle lift on hover
+      }
+    }
+
+    .saved-item-title {
+      font-size: 1.15em;
+      font-weight: 500;
+      margin-bottom: 10px;
+      line-height: 1.3;
+      color: #3f51b5; // Primary color
+    }
+
+    .saved-item-details {
+      padding: 0 16px 10px; // Adjust padding for details
+      font-size: 1em;
+      color: #555;
+
+      .highlight {
+        font-weight: 600;
+        color: #2196F3; // Blue for nutrient values
+      }
+    }
+
+    .saved-item-actions {
+      padding: 0 16px 16px; // Adjust padding for actions
+      display: flex;
+      gap: 10px; // Space between buttons
+      justify-content: flex-end; // Align buttons to the right
+
+      button {
+        font-size: 0.9em;
+        mat-icon {
+          margin-right: 5px;
+          font-size: 18px; // Smaller icon for action buttons
+        }
+      }
+    }
+  }
+}
