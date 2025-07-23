@@ -2,37 +2,31 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs'; // For managing subscriptions
 import { share, takeUntil } from 'rxjs/operators'; // For managing subscriptions
-import { UserMetrics, WeightLog } from '../../models/progress.model';
+import { UserMetrics, WeightLog } from '../../models/progress.model'; // Assuming WeightLog is defined here
 import { SharedMaterialModule } from '../../core/shared.module';
 import { MatDialog } from '@angular/material/dialog';
 import { CategoryScale, Chart, ChartData, ChartOptions, ChartType, Legend, LinearScale, LineController, LineElement, PointElement, Tooltip } from 'chart.js';
-import { LogMetricsDialogComponent, LogMetricsDialogData } from './log-metric/log-metric.component';
-import { ProgressService } from '../../core/service/progres.service';
+import { LogMetricsDialogComponent, LogMetricsDialogData } from './log-metric/log-metric.component'; // Ensure correct path
+import { ProgressService } from '../../core/service/progres.service'; // Ensure correct path
 import { BaseChartDirective } from 'ng2-charts';
 
-Chart.register(
-  CategoryScale,
-  LinearScale,
-  LineController,
-  PointElement,
-  LineElement,
-  Legend,
-  Tooltip
-);
+
+
 @Component({
   selector: 'app-progress-tracking',
   templateUrl: './progress.component.html',
   styleUrls: ['./progress.component.scss'],
-  // If this is a standalone component, you'd add:
   standalone: true,
-  imports: [SharedMaterialModule , BaseChartDirective], // Import your shared material module if needed
-  // imports: [SharedMaterialModule, CommonModule, ...] // Adjust imports based on your SharedMaterialModule and if it's standalone
+  imports: [SharedMaterialModule, BaseChartDirective],
 })
 export class ProgressTrackingComponent implements OnInit, OnDestroy {
 
   title = 'Progress Tracking';
   isLoading = true;
   private destroy$ = new Subject<void>();
+
+  // NEW: Property to hold today's (latest) metrics
+  latestMetrics: WeightLog | null = null; 
 
   // --- Combined Chart.js properties ---
   public combinedLineChartData: ChartData<ChartType> = { datasets: [], labels: [] };
@@ -100,7 +94,7 @@ export class ProgressTrackingComponent implements OnInit, OnDestroy {
       }
     }
   };
-  public lineChartType: ChartType = 'line'; // FIX: Changed type to ChartType
+  public lineChartType: ChartType = 'line';
 
   constructor(
     private router: Router,
@@ -121,8 +115,11 @@ export class ProgressTrackingComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.progressService.getWeightHistory().pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: WeightLog[]) => {
-        // Sort data by logDate to ensure correct chart display
+        // Sort data by logDate to ensure correct chart display and to easily find the latest
         const sortedData = data.sort((a, b) => new Date(a.logDate).getTime() - new Date(b.logDate).getTime());
+
+        // NEW: Get the latest log entry
+        this.latestMetrics = sortedData.length > 0 ? sortedData[sortedData.length - 1] : null;
 
         const labels = sortedData.map(log => new Date(log.logDate).toLocaleDateString());
         const weights = sortedData.map(log => log.weight);
@@ -179,6 +176,7 @@ export class ProgressTrackingComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         console.error('Error fetching progress data:', err);
         this.isLoading = false;
+        this.latestMetrics = null; // Clear latest metrics on error
         this.combinedLineChartData = { datasets: [], labels: [] };
       }
     });
@@ -189,9 +187,19 @@ export class ProgressTrackingComponent implements OnInit, OnDestroy {
   }
 
   onLogNewMetrics(): void {
+    // Pass existing values to the dialog if you want to pre-fill
+    // Example: pass this.latestMetrics to the dialog data
+    const dialogData: LogMetricsDialogData = {
+      logDate: new Date(), // Default to today
+      weight: this.latestMetrics?.weight || null,
+      waistSizeCm: this.latestMetrics?.waistSizeCm || null,
+      bodyFatPercentage: this.latestMetrics?.bodyFatPercentage || null,
+      notes: ''
+    };
+
     const dialogRef = this.dialog.open(LogMetricsDialogComponent, {
       width: '400px',
-      data: {}
+      data: dialogData // Pass initial data
     });
 
     dialogRef.afterClosed().subscribe((result: LogMetricsDialogData | undefined) => {
@@ -205,24 +213,29 @@ export class ProgressTrackingComponent implements OnInit, OnDestroy {
   }
 
   logMetricsToApi(data: LogMetricsDialogData): void {
-    const payload = {
-      logDate: data.logDate.toISOString(),
-      weight: data.weight,
-      waistSizeCm: data.waistSizeCm,
-      bodyFatPercentage: data.bodyFatPercentage,
-      notes: data.notes
-    };
+   const payload: any = { // Use 'any' or a new type that reflects optional properties
+    logDate: data.logDate.toISOString(),
+    notes: data.notes // notes can be an empty string if not provided
+  };
+
+    if (data.weight !== null) {
+      payload.weight = data.weight;
+    }
+    if (data.waistSizeCm !== null) {
+      payload.waistSizeCm = data.waistSizeCm;
+    }
+    if (data.bodyFatPercentage !== null) {
+      payload.bodyFatPercentage = data.bodyFatPercentage;
+    }
 
     this.progressService.logWeight(payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response) => {
         console.log('Metrics logged successfully:', response);
-        this.fetchProgressData(); // Re-fetch to update the combined chart
+        this.fetchProgressData(); // Re-fetch to update the combined chart and latest metrics
       },
       error: (error) => {
         console.error('Error logging metrics:', error);
       }
     });
   }
-
-
 }

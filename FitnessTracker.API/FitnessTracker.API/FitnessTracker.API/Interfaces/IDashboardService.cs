@@ -4,6 +4,6 @@ namespace FitnessTracker.API.Interfaces
 {
     public interface IDashboardService
     {
-        Task<DashboardSummaryResponseDto?> GetDashboardSummaryAsync(int userId, DateTime date);
+        Task<List<DashboardSummaryResponseDto?>> GetDashboardSummaryAsync(int userId, DateTime date);
     }
 }

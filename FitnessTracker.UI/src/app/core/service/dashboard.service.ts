@@ -14,9 +14,9 @@ export class DashboardService {
 
   constructor(private http: HttpClient) { }
 
-  getDailySummary(date: string): Observable<DashboardSummary> {
+  getDailySummary(date: string): Observable<DashboardSummary[]> {
     let params = new HttpParams().set('date', date); // date should be in YYYY-MM-DD format
-    return this.http.get<DashboardSummary>(`${this.apiUrl}/Dashboard/summary`, { params });
+    return this.http.get<DashboardSummary[]>(`${this.apiUrl}/Dashboard/summary`, { params });
   }
   setMacroGoal(macroGoal: MacroGoal): Observable<MacroGoal> {
     return this.http.post<MacroGoal>(`${this.apiUrl}/MacroGoals`, macroGoal);

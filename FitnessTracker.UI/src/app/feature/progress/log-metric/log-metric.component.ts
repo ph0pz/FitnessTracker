@@ -15,10 +15,10 @@ import { SharedMaterialModule } from '../../../core/shared.module';
 
 // Define the data structure for the dialog result
 export interface LogMetricsDialogData {
-  logDate: Date;
-  weight: number;
-  waistSizeCm: number;
-  bodyFatPercentage: number;
+  logDate: Date ;
+  weight: number | null; // Allow null
+  waistSizeCm: number | null; // Allow null
+  bodyFatPercentage: number | null; // Allow null
   notes: string;
 }
 

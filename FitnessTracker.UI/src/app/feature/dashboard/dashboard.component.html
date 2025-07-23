@@ -2,13 +2,13 @@
   <mat-card>
     <mat-card-header class="header">
       <mat-card-title>Dashboard</mat-card-title>
-      </mat-card-header>
+    </mat-card-header>
 
     <mat-card-content>
       <mat-card class="dashboard-section-card date-picker-card">
         <mat-card-content>
           <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Select Date</mat-label>
+            <mat-label>View Summary For Date</mat-label>
             <input matInput [matDatepicker]="picker" [formControl]="selectedDateControl">
             <mat-hint>MM/DD/YYYY</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
@@ -26,10 +26,10 @@
         <p>{{ errorMessage }}</p>
       </div>
 
-      <mat-card class="dashboard-section-card macros-summary-card" *ngIf="dashboardSummary && !isLoading">
+      <mat-card class="dashboard-section-card macros-summary-card" *ngIf="dashboardSummaryForSelectedDay && !isLoading">
         <mat-card-header class="section-header">
           <mat-card-title class="section-title">
-            Today's Summary: {{ dashboardSummary.todayDate | date:'fullDate' }}
+            Summary for: {{ dashboardSummaryForSelectedDay.todayDate | date:'fullDate' }}
           </mat-card-title>
         </mat-card-header>
         <mat-card-content>
@@ -45,8 +45,8 @@
                 </canvas>
               </div>
               <div class="macro-details">
-                <span>Consumed: <strong>{{ dashboardSummary.caloriesConsumed }} kcal</strong></span>
-                <span>Goal: {{ dashboardSummary.dailyCalorieGoal }} kcal</span>
+                <span>Consumed: <strong>{{ dashboardSummaryForSelectedDay.caloriesConsumed }} kcal</strong></span>
+                <span>Goal: {{ dashboardSummaryForSelectedDay.dailyCalorieGoal }} kcal</span>
               </div>
             </div>
             <div class="macro-pie-item">
@@ -59,8 +59,8 @@
                 </canvas>
               </div>
               <div class="macro-details">
-                <span>Consumed: <strong>{{ dashboardSummary.proteinConsumed }} g</strong></span>
-                <span>Goal: {{ dashboardSummary.dailyProteinGoal }} g</span>
+                <span>Consumed: <strong>{{ dashboardSummaryForSelectedDay.proteinConsumed }} g</strong></span>
+                <span>Goal: {{ dashboardSummaryForSelectedDay.dailyProteinGoal }} g</span>
               </div>
             </div>
             <div class="macro-pie-item">
@@ -73,8 +73,8 @@
                 </canvas>
               </div>
               <div class="macro-details">
-                <span>Consumed: <strong>{{ dashboardSummary.carbsConsumed }} g</strong></span>
-                <span>Goal: {{ dashboardSummary.dailyCarbGoal }} g</span>
+                <span>Consumed: <strong>{{ dashboardSummaryForSelectedDay.carbsConsumed }} g</strong></span>
+                <span>Goal: {{ dashboardSummaryForSelectedDay.dailyCarbGoal }} g</span>
               </div>
             </div>
             <div class="macro-pie-item">
@@ -87,16 +87,16 @@
                 </canvas>
               </div>
               <div class="macro-details">
-                <span>Consumed: <strong>{{ dashboardSummary.fatConsumed }} g</strong></span>
-                <span>Goal: {{ dashboardSummary.dailyFatGoal }} g</span>
+                <span>Consumed: <strong>{{ dashboardSummaryForSelectedDay.fatConsumed }} g</strong></span>
+                <span>Goal: {{ dashboardSummaryForSelectedDay.dailyFatGoal }} g</span>
               </div>
             </div>
           </div>
           <mat-divider></mat-divider>
-          <div class="additional-metrics">
-            <!-- <p>Completed Exercises: <strong>{{ dashboardSummary.completedExercisesToday }}</strong></p> -->
-            <p>Current Weight: <strong>{{ dashboardSummary.currentWeight }} kg</strong></p>
-          </div>
+           <!-- <div class="additional-metrics"> 
+            <p>Completed Exercises: <strong>{{ dashboardSummaryForSelectedDay.completedExercisesToday }}</strong></p>
+            <p>Weight on this day: <strong>{{ dashboardSummaryForSelectedDay.currentWeight }} kg</strong></p>
+          </div>  -->
         </mat-card-content>
       </mat-card>
 
@@ -105,27 +105,32 @@
           <button mat-raised-button color="primary" (click)="addMeal()">
             <mat-icon>restaurant</mat-icon> Add Meal
           </button>
-                  <button mat-raised-button color="accent" (click)="editMacros()">
+          <button mat-raised-button color="accent" (click)="editMacros()">
             <mat-icon>settings</mat-icon> Change Macros
           </button>
-              <button mat-raised-button color="primary" (click)="logWeight()">
+          <button mat-raised-button color="primary" (click)="logWeight()">
             <mat-icon>monitor_weight</mat-icon> Log Weight
           </button>
-          </mat-card-content>
+        </mat-card-content>
       </mat-card>
 
-      <!-- <mat-card class="dashboard-section-card progress-graph-card">
+      <mat-card class="dashboard-section-card progress-graph-card" *ngIf="macroConsumptionTrendChartData.datasets.length > 0 && !isLoading">
         <mat-card-header class="section-header">
-          <mat-card-title class="section-title">📊 Progress Graph (Weight over Time)</mat-card-title>
+          <mat-card-title class="section-title">📊 Macro Consumption Trend (Last 30 Days)</mat-card-title>
         </mat-card-header>
         <mat-card-content class="chart-container">
           <canvas baseChart
-            [data]="lineChartData"
-            [options]="lineChartOptions"
+            [data]="macroConsumptionTrendChartData"
+            [options]="macroConsumptionTrendChartOptions"
             [type]="lineChartType">
           </canvas>
         </mat-card-content>
-      </mat-card> -->
+      </mat-card>
+
+      <div *ngIf="!isLoading && !dashboardSummaryForSelectedDay && !errorMessage" class="no-data-message">
+        <p>No dashboard data available for the selected period.</p>
+      </div>
+
     </mat-card-content>
   </mat-card>
 </div>

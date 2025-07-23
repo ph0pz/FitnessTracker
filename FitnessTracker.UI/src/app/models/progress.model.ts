@@ -2,7 +2,7 @@
 // Define the interface for a single weight log entry from the API
 export interface WeightLog {
   logDate: string; // ISO string
-  weight: number;
+  weight: number ;
   waistSizeCm: number;
   bodyFatPercentage: number;
   notes: string;

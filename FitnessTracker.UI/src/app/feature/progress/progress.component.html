@@ -31,29 +31,41 @@
             <mat-icon>add</mat-icon> Log New Weight
           </button>
         </div>
+<mat-card class="metrics-card">
+  <mat-card-header class="section-header">
+    <mat-card-title class="section-title">Latest Metrics
+      <span *ngIf="latestMetrics?.logDate">
+        ({{ latestMetrics?.logDate | date:'shortDate' }})
+      </span>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content class="other-metrics-content">
+    <div class="metric-item">
+      <span>Weight: </span>
+      <strong>{{ latestMetrics?.weight | number:'1.1-1' }} kg</strong>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="metric-item">
+      <span>Waist Size: </span>
+      <strong>{{ latestMetrics?.waistSizeCm | number:'1.1-1' }} cm</strong>
+    </div>
+    <mat-divider></mat-divider>
+    <div class="metric-item">
+      <span>Body Fat %: </span>
+      <strong>{{ latestMetrics?.bodyFatPercentage | number:'1.1-1' }} %</strong>
+    </div>
+      <mat-divider *ngIf="latestMetrics?.notes"></mat-divider>
+    <div class="metric-item" *ngIf="latestMetrics?.notes">
+      <span>Notes: </span>
+      <strong>{{ latestMetrics?.notes }}</strong>
+    </div>
+  </mat-card-content>
+  <mat-card-footer *ngIf="!latestMetrics">
+    <p class="no-data-message">No metrics logged yet. Click "Log New Weight" to add your first entry!</p>
+  </mat-card-footer>
+</mat-card>
 
-        <!-- <mat-card class="metrics-card">
-          <mat-card-header class="section-header">
-            <mat-card-title class="section-title">Other Metrics</mat-card-title>
-          </mat-card-header>
-          <mat-card-content class="other-metrics-content">
-            <div class="metric-item">
-              <span>Waist Size: </span>
-              <strong>{{ userMetrics.waistSize.value }} {{ userMetrics.waistSize.unit }}</strong>
-              <span *ngIf="userMetrics.waistSize.average !== undefined" class="metric-average">
-                (Avg. {{ userMetrics.waistSize.average }} {{ userMetrics.waistSize.unit }})
-              </span>
-            </div>
-            <mat-divider></mat-divider>
-            <div class="metric-item">
-              <span>Body Fat %: </span>
-              <strong>{{ userMetrics.bodyFat.value }} {{ userMetrics.bodyFat.unit }}</strong>
-              <span *ngIf="userMetrics.bodyFat.average !== undefined" class="metric-average">
-                (Avg. {{ userMetrics.bodyFat.average }} {{ userMetrics.bodyFat.unit }})
-              </span>
-            </div>
-          </mat-card-content>
-        </mat-card> -->
+      
 
        
       </div>
