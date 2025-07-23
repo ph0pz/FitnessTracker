@@ -1,5 +1,5 @@
 // src/app/features/dashboard/dashboard.component.ts (UPDATED)
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
@@ -16,10 +16,14 @@ import { format } from 'date-fns';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartOptions, ChartType } from 'chart.js';
 import { DashboardService } from '../../core/service/dashboard.service';
-import { DashboardSummary } from '../../models/dashboard-summary.model';
+import { DashboardSummary, MacroGoal, MacroGoalInput } from '../../models/dashboard.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SharedMaterialModule } from '../../core/shared.module';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { EditMacrosDialogComponent } from './macro-dialog/macro-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ProgressService } from '../../core/service/progres.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,8 +35,17 @@ import { Router } from '@angular/router';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  currentMacroGoal: MacroGoal | undefined; // To store and display current goal
 
+
+
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   dashboardSummary: DashboardSummary | null = null;
   selectedDateControl = new FormControl(new Date());
   isLoading: boolean = false;
@@ -47,7 +60,7 @@ export class DashboardComponent implements OnInit {
       legend: { display: false },
       tooltip: {
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             const label = context.label || '';
             if (context.parsed !== null) {
               return `${label}: ${context.parsed} ${context.dataset.label}`;
@@ -146,7 +159,7 @@ export class DashboardComponent implements OnInit {
   public lineChartType: 'line' = 'line';
 
 
-  constructor(private dashboardService: DashboardService, private router: Router) { }
+  constructor(private dashboardService: DashboardService, private router: Router, private dialog: MatDialog,) { }
 
   ngOnInit(): void {
     // Initial fetch of dashboard summary for the selected date
@@ -228,6 +241,51 @@ export class DashboardComponent implements OnInit {
 
   addMeal(): void {
     this.router.navigate(['/meals']);
+  }
+    logWeight(): void {
+    this.router.navigate(['/progress']);
+  }
+  editMacros(): void {
+    let currentGoalForDialog: MacroGoalInput | undefined;
+
+    // Map the dashboardSummary goals to the dialog's expected MacroGoalInput
+    if (this.dashboardSummary) {
+      currentGoalForDialog = {
+        goalType: this.dashboardSummary.dailyCalorieGoal > 0 ? 'Custom' : 'Maintenance', // Default or infer type based on goal existence
+        calories: this.dashboardSummary.dailyCalorieGoal,
+        protein: this.dashboardSummary.dailyProteinGoal,
+        carbs: this.dashboardSummary.dailyCarbGoal,
+        fat: this.dashboardSummary.dailyFatGoal,
+      };
+    }
+
+    const dialogRef = this.dialog.open(EditMacrosDialogComponent, {
+      width: '400px',
+      data: {
+        currentGoal: currentGoalForDialog // Now passing the mapped daily goals
+      }
+    });
+
+    dialogRef.afterClosed().pipe(takeUntil(this.destroy$)).subscribe((result: MacroGoalInput | undefined) => {
+      if (result) {
+        console.log('Dialog result (Macro Goal):', result);
+        this.dashboardService.setMacroGoal(result).pipe(takeUntil(this.destroy$)).subscribe({
+          next: (response) => {
+            console.log('Macro Goal set successfully:', response);
+            // After setting a new goal, you should re-fetch the dashboard summary
+            // to update the displayed values on the dashboard.
+            this.fetchDashboardSummary(this.selectedDateControl.value);
+            // Show a success message to the user (e.g., MatSnackBar)
+          },
+          error: (err) => {
+            console.error('Error setting macro goal:', err);
+            // Show an error message to the user
+          }
+        });
+      } else {
+        console.log('Macro Goal dialog closed without saving.');
+      }
+    });
   }
 
 }

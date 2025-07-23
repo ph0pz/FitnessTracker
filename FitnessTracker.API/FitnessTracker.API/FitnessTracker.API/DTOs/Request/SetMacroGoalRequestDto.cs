@@ -4,7 +4,7 @@ namespace FitnessTracker.API.DTOs.Request
 {
     public class SetMacroGoalRequestDto
     {
-        [Required, StringLength(20)]
+        //[Required, StringLength(20)]
         public string GoalType { get; set; }
         [Range(1000, 10000)]
         public int Calories { get; set; }

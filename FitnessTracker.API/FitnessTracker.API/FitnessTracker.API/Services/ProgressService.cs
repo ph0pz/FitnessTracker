@@ -17,19 +17,45 @@ namespace FitnessTracker.API.Services
 
         public async Task<WeightLogDto?> AddWeightLogAsync(int userId, AddWeightLogRequestDto request)
         {
-            var weightLog = new WeightLog
-            {
-                UserId = userId,
-                LogDate = request.LogDate.ToUniversalTime(), // Store UTC
-                Weight = request.Weight,
-                WaistSizeCm = request.WaistSizeCm,
-                BodyFatPercentage = request.BodyFatPercentage,
-                Notes = request.Notes
-            };
+           
+            var requestDateUtc = request.LogDate.ToUniversalTime().Date;
 
-            _context.WeightLogs.Add(weightLog);
+           
+            var existingWeightLog = await _context.WeightLogs
+                .Where(wl => wl.UserId == userId && wl.LogDate.Date == requestDateUtc) 
+                .FirstOrDefaultAsync();
+
+            WeightLog weightLog;
+
+            if (existingWeightLog != null)
+            {
+     
+                weightLog = existingWeightLog; 
+                weightLog.Weight = request.Weight;
+                weightLog.WaistSizeCm = request.WaistSizeCm;
+                weightLog.BodyFatPercentage = request.BodyFatPercentage;
+                weightLog.Notes = request.Notes; 
+
+                _context.WeightLogs.Update(weightLog); 
+            }
+            else
+            {
+              
+                weightLog = new WeightLog
+                {
+                    UserId = userId,
+                    LogDate = request.LogDate.ToUniversalTime(),
+                    Weight = request.Weight,
+                    WaistSizeCm = request.WaistSizeCm,
+                    BodyFatPercentage = request.BodyFatPercentage,
+                    Notes = request.Notes
+                };
+                _context.WeightLogs.Add(weightLog); 
+            }
+
             await _context.SaveChangesAsync();
 
+        
             return new WeightLogDto
             {
                 Id = weightLog.Id,

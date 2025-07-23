@@ -77,9 +77,6 @@ public partial class FitnessTrackerDbContext : DbContext
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.SetDate).HasDefaultValueSql("(getdate())");
 
-            entity.HasOne(d => d.User).WithMany(p => p.MacroGoals)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__MacroGoal__UserI__46E78A0C");
         });
 
         modelBuilder.Entity<MealEntry>(entity =>

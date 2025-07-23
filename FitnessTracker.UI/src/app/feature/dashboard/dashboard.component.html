@@ -94,7 +94,7 @@
           </div>
           <mat-divider></mat-divider>
           <div class="additional-metrics">
-            <p>Completed Exercises: <strong>{{ dashboardSummary.completedExercisesToday }}</strong></p>
+            <!-- <p>Completed Exercises: <strong>{{ dashboardSummary.completedExercisesToday }}</strong></p> -->
             <p>Current Weight: <strong>{{ dashboardSummary.currentWeight }} kg</strong></p>
           </div>
         </mat-card-content>
@@ -104,6 +104,12 @@
         <mat-card-content class="action-buttons-grid">
           <button mat-raised-button color="primary" (click)="addMeal()">
             <mat-icon>restaurant</mat-icon> Add Meal
+          </button>
+                  <button mat-raised-button color="accent" (click)="editMacros()">
+            <mat-icon>settings</mat-icon> Change Macros
+          </button>
+              <button mat-raised-button color="primary" (click)="logWeight()">
+            <mat-icon>monitor_weight</mat-icon> Log Weight
           </button>
           </mat-card-content>
       </mat-card>

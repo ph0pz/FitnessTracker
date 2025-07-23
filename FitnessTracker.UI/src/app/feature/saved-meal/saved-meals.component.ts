@@ -42,7 +42,7 @@ export class SavedMealsComponent implements OnInit {
       id: '', // or omit if backend generates
       date: date, // Use selected date from parent
       mealName: 'From Saved Item',
-      name: item.name,
+      name: item.name || '',
       calories: item.calories,
       protein: item.protein,
       carbs: item.carbs,

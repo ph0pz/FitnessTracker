@@ -12,10 +12,7 @@ export interface Meal {
 }
 export interface SavedItem {
   id: string;
-  date?: string; // YYYY-MM-DD
-  mealName?: string;
-  time?: string; // HH:MM AM/PM
-  name: string;
+  name?: string;
   calories: number;
   protein: number;
   carbs: number;

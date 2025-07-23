@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>Log New Metrics</h2>
+<mat-dialog-content [formGroup]="logForm">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Log Date</mat-label>
+    <input matInput [matDatepicker]="picker" formControlName="logDate">
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    <mat-error *ngIf="logForm.controls['logDate'].hasError('required') && logForm.controls['logDate'].touched">
+      Date is required
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Weight (kg)</mat-label>
+    <input matInput type="number" formControlName="weight" placeholder="e.g., 75.5">
+    <mat-error *ngIf="logForm.controls['weight'].hasError('required') && logForm.controls['weight'].touched">
+      Weight is required
+    </mat-error>
+    <mat-error *ngIf="logForm.controls['weight'].hasError('min') || logForm.controls['weight'].hasError('max')">
+      Please enter a valid weight.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Waist Size (cm)</mat-label>
+    <input matInput type="number" formControlName="waistSizeCm" placeholder="e.g., 80">
+    <mat-error *ngIf="logForm.controls['waistSizeCm'].hasError('required') && logForm.controls['waistSizeCm'].touched">
+      Waist size is required
+    </mat-error>
+    <mat-error *ngIf="logForm.controls['waistSizeCm'].hasError('min') || logForm.controls['waistSizeCm'].hasError('max')">
+      Please enter a valid waist size.
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Body Fat (%)</mat-label>
+    <input matInput type="number" formControlName="bodyFatPercentage" placeholder="e.g., 18">
+    <mat-error *ngIf="logForm.controls['bodyFatPercentage'].hasError('required') && logForm.controls['bodyFatPercentage'].touched">
+      Body fat percentage is required
+    </mat-error>
+    <mat-error *ngIf="logForm.controls['bodyFatPercentage'].hasError('min') || logForm.controls['bodyFatPercentage'].hasError('max')">
+      Please enter a valid body fat percentage.
+    </mat-error>
+  </mat-form-field>
+
+  <!-- <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Notes</mat-label>
+    <textarea matInput formControlName="notes" placeholder="Any additional notes"></textarea>
+  </mat-form-field> -->
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="logForm.invalid">Save</button>
+</mat-dialog-actions>

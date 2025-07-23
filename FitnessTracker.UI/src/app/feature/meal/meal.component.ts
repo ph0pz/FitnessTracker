@@ -112,7 +112,7 @@ export class MealComponent implements OnInit {
       protein: meal.protein,
       carbs: meal.carbs,
       fat: meal.fat,
-      name: meal.mealName,
+      name: meal.notes,
     };
     this.mealService.addSavedMeal(savedItem).subscribe({
       next: () => {
