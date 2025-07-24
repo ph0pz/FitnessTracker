@@ -19,6 +19,8 @@ public partial class FitnessTrackerDbContext : DbContext
 
     public virtual DbSet<ExerciseTemplate> ExerciseTemplates { get; set; }
 
+    public virtual DbSet<GptmacroSuggestion> GptmacroSuggestions { get; set; }
+
     public virtual DbSet<MacroGoal> MacroGoals { get; set; }
 
     public virtual DbSet<MealEntry> MealEntries { get; set; }
@@ -67,6 +69,22 @@ public partial class FitnessTrackerDbContext : DbContext
                 .HasConstraintName("FK__ExerciseT__UserI__5070F446");
         });
 
+        modelBuilder.Entity<GptmacroSuggestion>(entity =>
+        {
+            entity.HasKey(e => e.SuggestionId).HasName("PK__GPTMacro__940995085804094F");
+
+            entity.ToTable("GPTMacroSuggestion");
+
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+
+            entity.HasOne(d => d.User).WithMany(p => p.GptmacroSuggestions)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("FK__GPTMacroS__UserI__5FB337D6");
+        });
+
         modelBuilder.Entity<MacroGoal>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__MacroGoa__3214EC071AC2A4A2");
@@ -77,6 +95,9 @@ public partial class FitnessTrackerDbContext : DbContext
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.SetDate).HasDefaultValueSql("(getdate())");
 
+            entity.HasOne(d => d.User).WithMany(p => p.MacroGoals)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK__MacroGoal__UserI__46E78A0C");
         });
 
         modelBuilder.Entity<MealEntry>(entity =>

@@ -40,6 +40,7 @@ builder.Services.AddScoped<IMealService, MealService>();
 builder.Services.AddScoped<IMacroGoalService, MacroGoalService>();
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
 builder.Services.AddScoped<IProgressService, ProgressService>();
+builder.Services.AddScoped<IGptMacroService, GptMacroService>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret not configured.");

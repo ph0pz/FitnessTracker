@@ -36,4 +36,7 @@ export class MealService {
   addSavedMeal(item: SavedItem): Observable<SavedItem> {
     return this.http.post<SavedItem>(`${this.baseUrl}/Meals/saved`, item);
   }
+    fetchMacroSuggestion(item: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/gptMacro/analyze-macros`, item);
+  }
 }

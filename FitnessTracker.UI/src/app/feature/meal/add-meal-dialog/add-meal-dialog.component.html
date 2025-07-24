@@ -8,8 +8,17 @@
       <mat-datepicker-toggle matSuffix [for]="mealDatePicker"></mat-datepicker-toggle>
       <mat-datepicker #mealDatePicker></mat-datepicker>
       </mat-form-field>
+      <mat-form-field appearance="outline" class="full-width">
+  <mat-label>Describe your meal</mat-label>
+  <textarea matInput formControlName="mealPrompt" rows="2" placeholder="e.g. Grilled chicken with rice and vegetables"></textarea>
+</mat-form-field>
 
-    <mat-form-field appearance="outline" class="full-width">
+<button mat-stroked-button color="accent" (click)="fetchMacroSuggestion()" [disabled]="mealForm.get('mealPrompt')?.invalid">
+  Analyze Macros with GPT
+</button>
+
+
+    <mat-form-field style="margin-top: 18px;" appearance="outline" class="full-width">
       <mat-label>Meal Type</mat-label> <mat-select formControlName="mealName">
         <mat-option value="Breakfast">Breakfast</mat-option>
         <mat-option value="Lunch">Lunch</mat-option>
