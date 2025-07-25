@@ -46,7 +46,7 @@ export class LogMetricsDialogComponent implements OnInit {
       weight: [null, [Validators.required, Validators.min(1), Validators.max(500)]], // Add reasonable min/max
       waistSizeCm: [null, [Validators.required, Validators.min(10), Validators.max(200)]],
       bodyFatPercentage: [null, [Validators.required, Validators.min(1), Validators.max(100)]],
-    //   notes: ['']
+      notes: ['']
     });
   }
 

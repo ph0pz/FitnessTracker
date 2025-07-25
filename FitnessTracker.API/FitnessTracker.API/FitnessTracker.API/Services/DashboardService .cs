@@ -31,7 +31,7 @@ namespace FitnessTracker.Api.Services
             }
 
             // Determine the 30-day range (from 29 days ago up to and including today)
-            var todayUtc = todayDate.ToUniversalTime().Date;
+            var todayUtc = todayDate.Date;
             var thirtyDaysAgoUtc = todayUtc.AddDays(-29); // Start date for 30 days (today is 1st day)
 
             // Fetch all relevant data for the 30-day period in single queries for efficiency
