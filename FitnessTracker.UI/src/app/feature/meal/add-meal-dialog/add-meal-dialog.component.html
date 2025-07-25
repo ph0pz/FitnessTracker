@@ -16,7 +16,10 @@
 <button mat-stroked-button color="accent" (click)="fetchMacroSuggestion()" [disabled]="mealForm.get('mealPrompt')?.invalid">
   Analyze Macros with GPT
 </button>
-
+<div class="loading-spinner" *ngIf="loading">
+  <mat-progress-spinner mode="indeterminate" diameter="30" strokeWidth="4" color="accent"></mat-progress-spinner>
+  <span style="margin-left: 8px;">Analyzing...</span>
+</div>
 
     <mat-form-field style="margin-top: 18px;" appearance="outline" class="full-width">
       <mat-label>Meal Type</mat-label> <mat-select formControlName="mealName">

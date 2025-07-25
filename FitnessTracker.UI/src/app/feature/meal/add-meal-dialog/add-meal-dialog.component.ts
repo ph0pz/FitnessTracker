@@ -14,22 +14,23 @@ import { MealService } from '../../../core/service/meal.service';
 })
 export class AddMealDialogComponent {
   mealForm: FormGroup;
-private unsubscribe$ = new Subject<void>(); 
-  constructor(
-    private dialogRef: MatDialogRef<AddMealDialogComponent>,
-    private fb: FormBuilder,
-     private mealService: MealService
-  ) {
-this.mealForm = this.fb.group({
-  date: [new Date(), Validators.required], // Add date if missing
-  mealName: ['', Validators.required],
-  calories: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0)]],
-  protein: [0, [Validators.required, Validators.min(0)]],
-  carbs: [0, [Validators.required, Validators.min(0)]],
-  fat: [0, [Validators.required, Validators.min(0)]],
-  notes: [''],
-  mealPrompt: [''] 
-});
+  loading = false;
+  private unsubscribe$ = new Subject<void>(); 
+    constructor(
+      private dialogRef: MatDialogRef<AddMealDialogComponent>,
+      private fb: FormBuilder,
+      private mealService: MealService
+    ) {
+  this.mealForm = this.fb.group({
+    date: [new Date(), Validators.required], // Add date if missing
+    mealName: ['', Validators.required],
+    calories: [{ value: 0, disabled: true }, [Validators.required, Validators.min(0)]],
+    protein: [0, [Validators.required, Validators.min(0)]],
+    carbs: [0, [Validators.required, Validators.min(0)]],
+    fat: [0, [Validators.required, Validators.min(0)]],
+    notes: [''],
+    mealPrompt: [''] 
+  });
 
     this.setupCalorieCalculation();
   }
@@ -88,25 +89,30 @@ this.mealForm = this.fb.group({
     return Math.round(proteinCalories + carbCalories + fatCalories); // Round to nearest whole number
   }
   fetchMacroSuggestion(): void {
-  const prompt = this.mealForm.get('mealPrompt')?.value;
-  if (!prompt) return;
+    const prompt = this.mealForm.get('mealPrompt')?.value;
+    if (!prompt) return;
 
-  const payload = { prompt: prompt };
+    const payload = { prompt };
+    this.loading = true;
 
-  this.mealService.fetchMacroSuggestion(payload).subscribe({
-    next: (res) => {
-      this.mealForm.patchValue({
-        protein: res.protein ?? 0,
-        carbs: res.carbs ?? 0,
-        fat: res.fat ?? 0,
-        calories: res.calories ?? 0
-      });
-    },
-    error: (err) => {
-      console.error('GPT API error', err);
-      alert('Failed to fetch macro suggestion.');
-    }
-  });
-}
+    this.mealService.fetchMacroSuggestion(payload).subscribe({
+      next: (res) => {
+        this.mealForm.patchValue({
+          protein: res.protein ?? 0,
+          carbs: res.carbs ?? 0,
+          fat: res.fat ?? 0,
+          calories: res.calories ?? 0
+        });
+      },
+      error: (err) => {
+        console.error('GPT API error', err);
+        alert('Failed to fetch macro suggestion.');
+      },
+      complete: () => {
+        this.loading = false;
+      }
+    });
+  }
+
 
 }
